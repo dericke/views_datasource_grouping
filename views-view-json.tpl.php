@@ -14,7 +14,7 @@
  
 //print_r($view);
 //print_r($rows);
-print_r($options);
+//print_r($options);
 
 $items = array();
 foreach($rows as $row) {
