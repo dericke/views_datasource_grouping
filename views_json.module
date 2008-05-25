@@ -1,0 +1,13 @@
+<?php
+//$Id $
+/**
+ @file views_json.module
+ Placekeeper file for views_datasource module file
+ @see views_json.views.inc
+*/
+//$views_path = drupal_get_path('module', 'views');
+//require_once "./$views_path//views.module";
+//views_include_handlers();
+//$views_json_path = drupal_get_path('module', 'views_json');
+//require_once (".//$views_json_path//views_json.views.inc");
+
