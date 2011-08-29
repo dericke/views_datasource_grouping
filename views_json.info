@@ -1,6 +1,0 @@
-; $Id $
-name = Views JSON
-description = "Views style plugin to render node content as JSON"
-package = Views
-core = 6.x
-dependencies[] = views
