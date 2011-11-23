@@ -207,10 +207,10 @@ function _views_xhtml_format_author($username) {
     return $author;
   }
   if (is_numeric($username)) {
-    $user = user_load(array('uid' => $username));
+    $user = user_load($username);
   }
   else {
-    $user = user_load(array('name' => $username));
+    $user = user_load_by_name($username);
   }
   if (!$user) {
     //$author["name"] = variable_get('anonymous', ('Anonymous'));
