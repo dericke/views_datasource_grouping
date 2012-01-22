@@ -13,6 +13,7 @@ class views_plugin_style_xml extends views_plugin_style {
    */
   function option_definition() {
     $options = parent::option_definition();
+    $author_default = isset($GLOBALS['user']->name) ? $GLOBALS['user']->name : variable_get('anonymous', t('Anonymous'));
     $options['schema'] = array('default' => 'raw', 'translatable' => FALSE);
     $options['root_element'] = array('default' => 'node', 'translatable' => FALSE);
     $options['top_child_object'] = array('default' => 'node', 'translatable' => FALSE);
@@ -23,7 +24,7 @@ class views_plugin_style_xml extends views_plugin_style {
     $options['escape_as_CDATA'] = array('default' => 'no', 'translatable' => FALSE);
     $options['content_type'] = array('default' => 'text/xml', 'translatable' => FALSE);
     $options['header'] = array('default' => NULL, 'translatable' => FALSE);
-    $options['author'] = array('default' => $GLOBALS['user']->name, 'translatable' => FALSE);
+    $options['author'] = array('default' => $author_default, 'translatable' => FALSE);
     $options['using_views_api_mode'] = array('default' => FALSE, 'translatable' => FALSE);
     //$options['action_on_missing_field'] = array('default' => 'none', 'translatable' => FALSE);
     return $options;

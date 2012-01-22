@@ -94,17 +94,17 @@ function template_preprocess_views_views_xml_style_opml(&$vars) {
   $options = $vars["options"];
   $base = $view->base_table;
   $top_child_object = $options["top_child_object"];
-  $root = "opml";;
+  $root = "opml";
   $plaintext_output = $options["plaintext_output"];
   $vars["content_type"] = ($options['content_type'] == 'default') ? 'text/html' : $options['content_type'];
-  $header  = $options["header"];
+  $header = $options["header"];
   $author = _views_xml_format_author($options["author"]);
   if (empty($header) || !$header) {
     $vars["title"] = ($view->get_title() ? $view->get_title(): $view->name);
     $vars["dateCreated"] = format_date(time(), 'custom', DATE_RFC822);
     $vars["ownerName"] = $author["name"];
     $vars["ownerEmail"] = $author["email"];
-    $vars["ownerId"] = url("user/" . $GLOBALS['user']->uid, array('absolute' => TRUE));
+    $vars["ownerId"] = $author["uri"];
     $vars["docs"] = url($view->get_url(), array('absolute' => TRUE));
   }
   else {

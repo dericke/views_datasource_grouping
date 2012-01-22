@@ -13,13 +13,14 @@ class views_plugin_style_rdf extends views_plugin_style {
    */
   function option_definition() {
     $options = parent::option_definition();
+    $author_default = isset($GLOBALS['user']->name) ? $GLOBALS['user']->name : variable_get('anonymous', t('Anonymous'));
     $options['vocabulary'] = array('default' => 'foaf', 'translatable' => FALSE);
     $options['field_output'] = array('default' => 'normal', 'translatable' => FALSE);
     $options['plaintext_output'] = array('default' => TRUE, 'translatable' => FALSE);
     $options['escape_as_CDATA'] = array('default' => 'no', 'translatable' => FALSE);
     $options['content_type'] = array('default' => 'text/xml', 'translatable' => FALSE);
     $options['header'] = array('default' => NULL, 'translatable' => FALSE);
-    $options['author'] = array('default' => $GLOBALS['user']->name, 'translatable' => FALSE);
+    $options['author'] = array('default' => $author_default, 'translatable' => FALSE);
     $options['using_views_api_mode'] = array('default' => FALSE, 'translatable' => FALSE);
     //$options['action_on_missing_field'] = array('default' => 'none', 'translatable' => FALSE);
     return $options;

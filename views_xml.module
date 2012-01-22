@@ -202,42 +202,38 @@ function _views_xml_strip_illegal_xml_name_chars($input) {
 /**
  * Creates an author object to use in the headers of OPML and Atom documents
  * @param $username
- * @return unknown_type
  */
 function _views_xml_format_author($username) {
   $author = array();
+  $author['uri'] = '';
+  $author['email'] = variable_get('site_mail', 'none@none.info');
   if (!$username) {
-    $author["name"] = variable_get('anonymous', ('Anonymous'));
-    $author["email"] = variable_get('site_mail', 'none@none.info');
+    $author['name'] = variable_get('anonymous', t('Anonymous'));
     return $author;
   }
+
   if (is_numeric($username)) {
-    $user = user_load($username);
+    $account = user_load($username);
   }
   else {
-    $user = user_load_by_name($username);
+    $account = user_load_by_name($username);
   }
-  if (!$user) {
-    //$author["name"] = variable_get('anonymous', ('Anonymous'));
-    //$author["name"] = variable_get('anonymous', ('Anonymous'));
-    $author["name"] = $username;
-    $author["email"] = variable_get('site_mail', 'none@none.info');
-    return $author;
-  }
-  if (!module_exists("profile")) {
-    $author["name"] = $username;
-    $author["email"] = check_plain($user->mail);
-    return $author;
-  }
-  else {
-    profile_load_profile($user);
-    $author["name"] = check_plain(($user->profile_name ? $user->profile_name : $username));
-    $author["email"] = check_plain($user->mail);
-    if (user_access('access user profiles')) {
-      $author['uri'] = url('user/' . $user->uid, array('absolute' => TRUE));
+  $author['name'] = check_plain($username);
+  if (!$account) {
+    if (is_numeric($username)) {
+      // Do not let numeric user name.
+      $author['name'] = variable_get('anonymous', t('Anonymous'));
     }
     return $author;
   }
+
+  $author['name'] = check_plain(format_username($account));
+  $author['email'] = check_plain($account->mail);
+  if (user_access('access user profiles')) {
+    $author['uri'] = url('user/' . $account->uid, array('absolute' => TRUE));
+  }
+
+  return $author;
 }
 
 /**
