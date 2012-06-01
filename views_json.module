@@ -155,15 +155,22 @@ function _views_json_render_fields($view, $row) {
       }
     }
 
-    if (empty($field->options['exclude']) && ($field_output != "") && !empty($field_output)) {
-      $object = new stdClass();
-      $object->id = $id;
-      $object->content = $field_output;
-      $object->raw = $field_raw;
-      $object->class = drupal_clean_css_identifier(strtolower($id));//views_css_safe($id);
-      $object->label = check_plain($view->field[$id]->label());
-      $object->is_multiple = $field_is_multiple;
-      $rendered_fields[$id] = $object;
+    if(empty($field->options['exclude'])) {
+      if (empty($field->options['exclude']) && !($field->options['hide_empty'] && (empty($field_output)))) {
+        $object = new stdClass();
+        $object->id = $id;
+        // Respect the 'empty' value if empty and "No results text" is given.
+        if (empty($field_output) && $field->options['empty']) {
+          $object->content = $field->options['empty'];
+        } else {
+          $object->content = $field_output;
+        }
+        $object->raw = $field_raw;
+        $object->class = drupal_clean_css_identifier(strtolower($id));//views_css_safe($id);
+        $object->label = check_plain($view->field[$id]->label());
+        $object->is_multiple = $field_is_multiple;
+        $rendered_fields[$id] = $object;
+      }
     }
   }
   return $rendered_fields;
