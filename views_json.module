@@ -24,6 +24,44 @@ function views_json_views_api() {
 }
 
 /**
+ * Implements hook_field_attach_load().
+ */
+function views_json_field_attach_load($entity_type, &$entities, $age, $options) {
+  // Fix for issue #1613310, empty node fields not being displayed.
+  // Provide a default value for empty fields.
+  // When testing remember that these entities are cached.
+  if($entity_type == 'node' && $age == FIELD_LOAD_CURRENT) {
+    foreach($entities as $key => $entity) {
+      foreach($entity as $field_name => $field) {
+        if(empty($field) && preg_match('/^field_/', $field_name)) {
+          
+          $render_array = array();
+          $render_array_item = array(
+            'value' => '',
+            'format' => null,
+            'safe_value' => '',
+            'formatter' => 'text_default',
+          );
+          
+          $field_info = field_info_field($field_name);
+          if($field_info && $field_info['module'] == 'taxonomy') {
+            $render_array_item['tid'] = 'autocreate';
+            $render_array_item['name'] = '';
+          } else if($field_info && $field_info['module'] == 'link') {
+            // Same kind of exception with link module fields.
+            $render_array_item['title'] = '';
+            $render_array_item['url'] = '';
+          }
+          
+          $render_array[] = $render_array_item;
+          $entities[$key]->{$field_name}[$entity->language] = $render_array;
+        }
+      }
+    }
+  }
+}
+
+/**
  * We almost duplicate the content_handler_field_multiple::render function
  * to get the multiple rendered field values in an array
  * @param $field
