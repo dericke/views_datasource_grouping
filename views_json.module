@@ -281,6 +281,10 @@ function views_json_get($name, $display_id = 'default', $args = array(), $raw = 
 
 /**
  * Encodes JSON in a pretty-printed fashion.
+ *
+ * @deprecated The $option parameter in PHP 5.4.0 json_encode() deprecates this function.
+ *
+ * @see _views_json_json_encode
  */
 function _views_json_encode_formatted($v, $depth = 0) {
   $base_indent  = '&nbsp;&nbsp;';
@@ -339,4 +343,31 @@ function _views_json_debug_stop($var, $location) {
   var_dump($var);
   module_Invoke_all('exit');
   exit;
+}
+
+/**
+ * Backwards-compatible JSON encoder.
+ *
+ * Provides backwars-compatible support for more JSON encoding formats.
+ * Uses PHP's native JSON encoding when PHP 5.3.0 or greater is detected.
+ * Fallbacks to manual encoding/escaping when PHP 5.2.x and below is detected.
+ *
+ * @param array $rows
+ *   Results from template_preprocess_views_views_json_style_simple().
+ * @param int $bitmask
+ *   Integer to use as the $bitmask parameter for json_encode().
+ */
+function _views_json_json_encode($rows, $bitmask = NULL) {
+  if(PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3) {
+    $json = json_encode($rows, $bitmask);
+    // Encoding features not supported before 5.4.x.
+    if(PHP_MINOR_VERSION <= 4) {
+       $json = str_replace(array('\/'), array('/'), $json);
+    }
+  } else {
+    $json = json_encode($rows);
+    // Fix for issue #1613344.
+    $json = str_replace(array('\/'), array('/'), $json);
+  }
+  return $json;
 }

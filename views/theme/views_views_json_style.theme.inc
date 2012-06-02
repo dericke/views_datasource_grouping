@@ -22,6 +22,18 @@ function template_preprocess_views_views_json_style_simple(&$vars) {
   $top_child_object = $options["top_child_object"];
   $plaintext_output = $options["plaintext_output"];
   $objects = array();
+  
+  // Create bitmask for json_encode.
+  $option_defs = $vars['view']->style_plugin->option_definition();
+  $bitmasks = $option_defs['encoding']['contains'];
+  $bitmask = NULL;
+  foreach($bitmasks as $mask_key => $_bitmask) {
+    if(isset($options[$mask_key]) && $options[$mask_key]) {
+      $bitmask = $bitmask | constant($_bitmask['bitmask']);
+    }
+  }
+  $vars['bitmask'] = $bitmask;
+  
   foreach ($rows as $row) {
 
     $object = array();
