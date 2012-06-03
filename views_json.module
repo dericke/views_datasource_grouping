@@ -26,7 +26,7 @@ function views_json_views_api() {
 /**
  * Implements hook_field_attach_load().
  */
-function views_json_field_attach_load($entity_type, &$entities, $age, $options) {
+function views_json_field_attach_load($entity_type, $entities, $age, $options) {
   // Fix for issue #1613310, empty node fields not being displayed.
   // Provide a default value for empty fields.
   // When testing remember that these entities are cached.
