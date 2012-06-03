@@ -56,11 +56,12 @@ function views_json_views_pre_render(&$view) {
 }
 
 /**
- * Implements hook_field_attach_load.
+ * Implements hook_field_attach_load().
  */
 function views_json_field_attach_load($entity_type, $entities, $age, $options) {
+  // Fix for issue #1613310, empty node fields not being displayed.
   // Provide a default value for empty fields.
-  // For testing remember that these entities are cached.
+  // When testing remember that these entities are cached.
   if($entity_type == 'node' && $age == FIELD_LOAD_CURRENT) {
     foreach($entities as $key => $entity) {
       foreach($entity as $field_name => $field) {
@@ -74,16 +75,6 @@ function views_json_field_attach_load($entity_type, $entities, $age, $options) {
             'formatter' => 'text_default',
           );
           
-          // taxonomy_field_formatter_prepare_view() on taxonomy.module, l.1496
-          // expects each array to have an $item['tid'] key, but adding a 'tid'
-          // key causes taxonomy_term_load_multiple() to be called with whatever
-          // key is added, which we do not want to do on an empty field.
-          // Setting 'tid' to 'autocreate' prevents taxonomy_term_load_multiple()
-          // from getting called.
-          //
-          // If we set the 'autocreate' key, then taxonomy_field_formatter_view()
-          //  (taxonomy.module, l.1427) expects key 'name'. Whatever we put
-          // into the 'name' key is what will get printed by the Views/JSON.
           $field_info = field_info_field($field_name);
           if($field_info && $field_info['module'] == 'taxonomy') {
             $render_array_item['tid'] = 'autocreate';
@@ -233,7 +224,7 @@ function _views_json_render_fields($view, $row) {
           $field_output = ($src_match[2]);
       }
     }
-    
+
     if(empty($field->options['exclude'])) {
       if (empty($field->options['exclude']) && !($field->options['hide_empty'] && (empty($field_output)))) {
         $object = new stdClass();
