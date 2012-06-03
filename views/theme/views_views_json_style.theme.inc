@@ -28,7 +28,7 @@ function template_preprocess_views_views_json_style_simple(&$vars) {
   $bitmasks = $option_defs['encoding']['contains'];
   $bitmask = NULL;
   foreach($bitmasks as $mask_key => $_bitmask) {
-    if(isset($options[$mask_key]) && $options[$mask_key]) {
+    if(isset($options[$mask_key]) && $options[$mask_key] && !is_array($options[$mask_key])) {
       $bitmask = $bitmask | constant($_bitmask['bitmask']);
     }
   }
