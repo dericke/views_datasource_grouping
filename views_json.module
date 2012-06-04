@@ -24,10 +24,9 @@ function views_json_views_api() {
 }
 
 /**
- * Implements hook_views_pre_render.
+ * Implements hook_views_pre_render().
  */
 function views_json_views_pre_render(&$view) {
-  $test = null;
   if(isset($view->plugin_name) && $view->plugin_name == 'views_json') {
     // Support for Video field.
     if(!empty($view->result)) {

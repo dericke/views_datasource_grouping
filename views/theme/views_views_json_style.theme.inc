@@ -12,7 +12,6 @@
  * @ingroup views_templates
  * @see views_json.views.inc
  */
-
 function template_preprocess_views_views_json_style_simple(&$vars) {
   $view = $vars["view"];
   $rows = $vars["rows"];

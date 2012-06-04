@@ -17,6 +17,7 @@ class views_plugin_style_json extends views_plugin_style {
     $options['top_child_object'] = array('default' => 'node', 'translatable' => FALSE);
     $options['field_output'] = array('default' => 'normal', 'translatable' => FALSE);
     $options['plaintext_output'] = array('default' => TRUE, 'translatable' => FALSE);
+    $options['remove_newlines'] = array('default' => NULL, 'translatable' => FALSE);
     $options['format'] = array('default' => 'simple', 'translatable' => FALSE);
     $options['jsonp_prefix'] = array('default' => NULL, 'translatable' => FALSE);
     $options['content_type'] = array('default' => 'default', 'translatable' => FALSE);
@@ -72,6 +73,12 @@ class views_plugin_style_json extends views_plugin_style {
       '#title' => t('Plaintext output'),
       '#default_value' => $this->options['plaintext_output'],
       '#description' => t('For each row in the view, strip all markup from the field output.'),
+    );
+    $form['remove_newlines'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Remove newlines'),
+      '#default_value' => $this->options['remove_newlines'],
+      '#description' => t('Strip newline characters from the field output.'),
     );
     $form['format'] = array(
       '#type' => 'radios',
