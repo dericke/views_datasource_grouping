@@ -22,7 +22,7 @@ class views_plugin_style_json extends views_plugin_style {
     $options['jsonp_prefix'] = array('default' => NULL, 'translatable' => FALSE);
     $options['content_type'] = array('default' => 'default', 'translatable' => FALSE);
     $options['using_views_api_mode'] = array('default' => TRUE, 'translatable' => FALSE);
-    
+
     // Encoding options, to be used by json_encode().
     $options['encoding'] = array('contains' => array(
       'object_arrays' => array('default' => NULL, 'translatable' => FALSE, 'bitmask' => 'JSON_FORCE_OBJECT'),
@@ -47,6 +47,58 @@ class views_plugin_style_json extends views_plugin_style {
    * Provide a form for setting options.
    */
   function options_form(&$form, &$form_state) {
+    // *****************************************************************
+    //~ if ($this->uses_fields() && $this->definition['uses grouping']) {
+      $options = array('' => t('- None -'));
+      $field_labels = $this->display->handler->get_field_labels(TRUE);
+      $options += $field_labels;
+      // If there are no fields, we can't group on them.
+      if (count($options) > 1) {
+        // This is for backward compability, when there was just a single select form.
+        if (is_string($this->options['grouping'])) {
+          $grouping = $this->options['grouping'];
+          $this->options['grouping'] = array();
+          $this->options['grouping'][0]['field'] = $grouping;
+        }
+        if (isset($this->options['group_rendered']) && is_string($this->options['group_rendered'])) {
+          $this->options['grouping'][0]['rendered'] = $this->options['group_rendered'];
+          unset($this->options['group_rendered']);
+        }
+
+        //~ $c = count($this->options['grouping']);
+        // Add a form for every grouping, plus one.
+        //~ for ($i = 0; $i <= $c; $i++) {
+          $i = 0;
+          $grouping = !empty($this->options['grouping'][$i]) ? $this->options['grouping'][$i] : array();
+          $grouping += array('field' => '', 'rendered' => TRUE, 'rendered_strip' => FALSE);
+          $form['grouping'][$i]['field'] = array(
+            '#type' => 'select',
+            '#title' => t('Grouping field'),
+            '#options' => $options,
+            '#default_value' => $grouping['field'],
+            '#description' => t('You may optionally specify a field by which to group the records. Leave blank to not group.'),
+          );
+          //~ $form['grouping'][$i]['rendered'] = array(
+            //~ '#type' => 'checkbox',
+            //~ '#title' => t('Use rendered output to group rows'),
+            //~ '#default_value' => $grouping['rendered'],
+            //~ '#description' => t('If enabled the rendered output of the grouping field is used to group the rows.'),
+            //~ '#dependency' => array(
+              //~ 'edit-style-options-grouping-' . $i . '-field' => array_keys($field_labels),
+            //~ )
+          //~ );
+          //~ $form['grouping'][$i]['rendered_strip'] = array(
+            //~ '#type' => 'checkbox',
+            //~ '#title' => t('Remove tags from rendered output'),
+            //~ '#default_value' => $grouping['rendered_strip'],
+            //~ '#dependency' => array(
+              //~ 'edit-style-options-grouping-' . $i . '-field' => array_keys($field_labels),
+            //~ )
+          //~ );
+        //~ }
+      }
+    //~ }
+    // *****************************************************************
     $form['root_object'] = array(
     '#type' => 'textfield',
     '#title' => t('Root object name'),
@@ -110,7 +162,7 @@ class views_plugin_style_json extends views_plugin_style {
       '#default_value' => $this->options['using_views_api_mode'],
       '#description' => t('Not using View API mode means the JSON gets output directly and the server ceases normal page processing.  Using it means the server does not cease processing after outputting the JSON.  This allows the Views API to be used with the view without having to prematurely terminate page processing.'),
     );
-    
+
     // JSON encoding options.
     $form['object_arrays'] = array(
       '#type' => 'checkbox',
@@ -161,7 +213,7 @@ class views_plugin_style_json extends views_plugin_style {
       '#default_value' => $this->options['json_char_encoding'],
       '#description' => t('You can combine multiple options.'),
     );
-    
+
     // Only enable options supported by the current PHP version.
     if(!(PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 4)) {
       $php5_4_ops = array('bigint_string', 'pretty_print', 'unescaped_slashes', 'unescaped_unicode');
