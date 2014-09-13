@@ -36,7 +36,7 @@ function views_json_views_pre_render(&$view) {
         foreach($view->field as $field_name => $field) {
           if($field instanceof views_handler_field_field) {
             if($field->field_info['type'] == 'video') {
-              
+
               // Get the Video URL.
               $video = $field->get_value($view->result[$row]);
               $url = file_create_url($video[0]['uri']);
@@ -167,6 +167,18 @@ function _views_json_render_fields($view, $row) {
     else {
       $field_output = $view->field[$field->options['id']]->advanced_render($row);
       $field_raw = (isset($view->field[$id]->field_alias) && isset($row->{$view->field[$id]->field_alias})) ? $row->{$view->field[$id]->field_alias} : NULL;
+      // Check if this is field is the entity's label.
+      if (empty($field->base_table)) {
+        $entity_info = entity_get_info($field->table);
+        if (isset($entity_info['entity keys'])) {
+          $label_field = $entity_info['entity keys']['label'];
+          if ($field->real_field == $label_field) {
+            // Decode html entities in label field as views does this by default for those fields.
+            $field_output = html_entity_decode($field_output, ENT_QUOTES);
+            $field_output = mb_check_encoding($field_output, 'UTF-8') ? $field_output : utf8_encode($field_output);
+          }
+        }
+      }
     }
 
     $img_match = array();
