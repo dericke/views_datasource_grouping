@@ -3,5 +3,6 @@ description = Views style plugin to render node content as XHTML microformats.
 package = Views
 core = 7.x
 dependencies[] = views
+dependencies[] = views_xml
 
 files[] = views/plugins/views_plugin_style_xhtml.inc
