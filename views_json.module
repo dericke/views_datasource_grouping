@@ -185,19 +185,51 @@ function _views_json_render_fields($view, $row) {
 
     $img_match = array();
     $src_match = array();
-    if (is_array($field_output)) {
-      foreach ($field_output as $i => $f) {
-        if (preg_match("/<img[^>]+>/i", $f, $img_match)) {
-          if (preg_match('/(src)="([^"]*)"/i', $img_match[0], $src_match)) {
-            $field_output[$i] = ($src_match[2]);
+    if (isset($field->options['type'])) {
+      if (is_array($field_output) && $field->options['type'] == 'image') {
+        foreach ($field_output as $i => $f) {
+          if (preg_match("/<img[^>]+>/i", $f, $img_match)) {
+            if (preg_match('/(src)="([^"]*)"/i', $img_match[0], $src_match)) {
+              $field_output[$i]['src'] = $src_match[2];
+              $field_output[$i]['alt'] = '';
+
+              if (preg_match('/(alt)="([^"]*)"/i', $img_match[0], $alt_match)) {
+                $field_output[$i]['alt'] = $alt_match[2];
+              }
+            }
           }
         }
       }
-    }
-    else {
-      if (preg_match("/<img[^>]+>/i", $field_output, $img_match)) {
-        if (preg_match('/(src)="([^"]*)"/i', $img_match[0], $src_match)) {
-          $field_output = ($src_match[2]);
+      else {
+        if ($field->options['type'] == 'image') {
+          // if field's type was an image. we just get the path.
+          if (preg_match_all("/<img[^>]+>/i", $field_output, $img_matches)) {
+            $field_output = array();
+
+            if (sizeof($img_matches[0]) > 1) {
+              $field_is_multiple = TRUE;
+              foreach ($img_matches[0] as $i => $img_match) {
+                if (preg_match('/(src)="([^"]*)"/i', $img_match, $src_match)) {
+                  $field_output[$i]['src'] = $src_match[2];
+                  $field_output[$i]['alt'] = '';
+
+                  if (preg_match('/(alt)="([^"]*)"/i', $img_match, $alt_match)) {
+                    $field_output[$i]['alt'] = $alt_match[2];
+                  }
+                }
+              }
+            }
+            else {
+              if (preg_match('/(src)="([^"]*)"/i', $img_matches[0][0], $src_match)) {
+                $field_output['src'] = $src_match[2];
+                $field_output['alt'] = '';
+
+                if (preg_match('/(alt)="([^"]*)"/i', $img_matches[0][0], $alt_match)) {
+                  $field_output['alt'] = $alt_match[2];
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -234,17 +266,17 @@ function _views_json_render_fields($view, $row) {
  */
 function _views_json_check_label($input) {
   $output = str_replace(array(
-    '{',
-    '}',
-    '[',
-    ']',
-    ':',
-    ',',
-    '"',
-    "'",
-    chr(47),
-    chr(92)
-  ), '', $input);
+      '{',
+      '}',
+      '[',
+      ']',
+      ':',
+      ',',
+      '"',
+      "'",
+      chr(47),
+      chr(92)
+    ), '', $input);
   $output = preg_replace(
     '/[\x{80}-\x{A0}' .      // Non-printable ISO-8859-1 + NBSP
     '\x{01}-\x{1F}' .        // Non-printable ASCII characters

@@ -46,13 +46,30 @@ function template_preprocess_views_views_json_style_simple(&$vars) {
           $label = $plaintext_output ? strip_tags($field->id) : $field->id;
         }
         if (!$field->is_multiple) {
-          $content = $plaintext_output ? strip_tags(html_entity_decode($field->content, ENT_QUOTES)) : $field->content;
-          $content = mb_check_encoding($content, 'UTF-8') ? $content : utf8_encode($content);
+          if (is_array($field->content)) {
+            $content = array();
+            foreach ($field->content as $key => $value) {
+              $safe = $plaintext_output ? strip_tags(html_entity_decode($value, ENT_QUOTES)) : $value;
+              $safe = mb_check_encoding($safe, 'UTF-8') ? $safe : utf8_encode($safe);
+              $content[$key] = $safe;
+            }
+          }
+          else {
+            $content = $plaintext_output ? strip_tags(html_entity_decode($field->content, ENT_QUOTES)) : $field->content;
+            $content = mb_check_encoding($content, 'UTF-8') ? $content : utf8_encode($content);
+          }
         }
         else {
           $content = array();
           foreach ($field->content as $n => $oc) {
-            $content[$n] = ($plaintext_output ? strip_tags($oc) : $oc);
+            if (is_array($oc)) {
+              foreach ($oc as $key => $value) {
+                $content[$n][$key] = ($plaintext_output ? strip_tags($value) : $value);
+              }
+            }
+            else {
+              $content[$n] = ($plaintext_output ? strip_tags($oc) : $oc);
+            }
           }
         }
       }
@@ -64,7 +81,14 @@ function template_preprocess_views_views_json_style_simple(&$vars) {
         else {
           $content = array();
           foreach ($field->raw as $n => $oc) {
-            $content[$n] = $plaintext_output ? strip_tags($oc) : $oc;
+            if (is_array($oc)) {
+              foreach ($oc as $key => $value) {
+                $content[$n][$key] = ($plaintext_output ? strip_tags($value) : $value);
+              }
+            }
+            else {
+              $content[$n] = ($plaintext_output ? strip_tags($oc) : $oc);
+            }
           }
         }
       }
