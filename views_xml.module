@@ -152,7 +152,7 @@ function _views_xml_render_fields($view, $row) {
       }
     }
 
-    if (empty($field->options['exclude']) && ($field_output != "") && !empty($field_output)) {
+    if (empty($field->options['exclude']) && !empty($field_output) && ($field_output !== "" || $field_output === '0')) {
       $object = new stdClass();
       $object->id = $id;
       $object->content = $field_output;
