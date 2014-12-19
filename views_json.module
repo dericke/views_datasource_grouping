@@ -413,13 +413,14 @@ function _views_json_debug_stop($var, $location) {
  *   Integer to use as the $bitmask parameter for json_encode().
  */
 function _views_json_json_encode($rows, $bitmask = NULL) {
-  if (PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3) {
+  if(defined('PHP_MAJOR_VERSION') && PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3) {
     $json = json_encode($rows, $bitmask);
     // Encoding features not supported before 5.4.x.
     if (PHP_MINOR_VERSION <= 4) {
       $json = str_replace(array('\/'), array('/'), $json);
     }
   }
+  // For php 5.2 and below
   else {
     $json = json_encode($rows);
     // Fix for issue #1613344.
