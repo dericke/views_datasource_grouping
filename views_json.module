@@ -1,18 +1,4 @@
 <?php
-
-/**
- * @file
- * Module definition for views_json
- *
- * @see views_json.views.inc
- */
-
-function views_json_init() {
-  if (isset($_GET['sort_order'])) {
-    $_GET['sort_order'] = strtoupper($_GET['sort_order']);
-  }
-}
-
 /**
  * Implements hook_views_api().
  */
