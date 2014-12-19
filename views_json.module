@@ -339,7 +339,7 @@ function _views_json_encode_formatted($v, $options, $depth = 0) {
     case 'object':
       $output = array();
       foreach ($v as $key => $val) {
-        $output[] = $indent . $base_indent . _views_json_encode_formatted(strval($key)) . ' : ' . _views_json_encode_formatted($val, $options, $depth + 1);
+        $output[] = $indent . $base_indent . _views_json_encode_formatted(strval($key), $options) . ' : ' . _views_json_encode_formatted($val, $options, $depth + 1);
       }
       return '{' . (!empty($output) ? $eol . implode(',' . $eol, $output) . $eol . $indent : '') . '}';
 
